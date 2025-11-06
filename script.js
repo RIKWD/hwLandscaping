@@ -72,97 +72,42 @@ function scrollHeader() {
 window.addEventListener('scroll', scrollHeader);
 
 // ================================
-// Gallery Lightbox
+// Gallery Before/After Toggle
 // ================================
 
 const galleryItems = document.querySelectorAll('.gallery-item');
-const lightbox = document.getElementById('lightbox');
-const lightboxImg = document.getElementById('lightbox-img');
-const lightboxCaption = document.getElementById('lightbox-caption');
-const lightboxClose = document.querySelector('.lightbox-close');
-const prevBtn = document.getElementById('prev-btn');
-const nextBtn = document.getElementById('next-btn');
 
-let currentImageIndex = 0;
-let galleryImages = [];
+galleryItems.forEach(item => {
+    const toggleBtn = item.querySelector('.gallery-toggle-btn');
+    const img = item.querySelector('.gallery-img');
+    const toggleText = item.querySelector('.toggle-text');
+    const beforeSrc = item.getAttribute('data-before');
+    const afterSrc = item.getAttribute('data-after');
 
-// Collect all gallery images
-galleryItems.forEach((item, index) => {
-    const img = item.querySelector('img');
-    const caption = item.getAttribute('data-caption');
+    toggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const currentState = item.getAttribute('data-state');
 
-    galleryImages.push({
-        src: img.src,
-        alt: img.alt,
-        caption: caption
-    });
-
-    // Open lightbox on click
-    item.addEventListener('click', () => {
-        openLightbox(index);
-    });
-});
-
-function openLightbox(index) {
-    currentImageIndex = index;
-    updateLightboxImage();
-    lightbox.classList.add('active');
-    document.body.style.overflow = 'hidden'; // Prevent scrolling
-}
-
-function closeLightbox() {
-    lightbox.classList.remove('active');
-    document.body.style.overflow = ''; // Restore scrolling
-}
-
-function updateLightboxImage() {
-    const image = galleryImages[currentImageIndex];
-    lightboxImg.src = image.src;
-    lightboxImg.alt = image.alt;
-    lightboxCaption.textContent = image.caption;
-}
-
-function showPreviousImage() {
-    currentImageIndex = (currentImageIndex - 1 + galleryImages.length) % galleryImages.length;
-    updateLightboxImage();
-}
-
-function showNextImage() {
-    currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
-    updateLightboxImage();
-}
-
-// Event listeners for lightbox
-if (lightboxClose) {
-    lightboxClose.addEventListener('click', closeLightbox);
-}
-
-if (prevBtn) {
-    prevBtn.addEventListener('click', showPreviousImage);
-}
-
-if (nextBtn) {
-    nextBtn.addEventListener('click', showNextImage);
-}
-
-// Close lightbox when clicking outside the image
-lightbox.addEventListener('click', (e) => {
-    if (e.target === lightbox) {
-        closeLightbox();
-    }
-});
-
-// Keyboard navigation for lightbox
-document.addEventListener('keydown', (e) => {
-    if (lightbox.classList.contains('active')) {
-        if (e.key === 'Escape') {
-            closeLightbox();
-        } else if (e.key === 'ArrowLeft') {
-            showPreviousImage();
-        } else if (e.key === 'ArrowRight') {
-            showNextImage();
+        if (currentState === 'before') {
+            // Switch to AFTER
+            img.style.opacity = '0';
+            setTimeout(() => {
+                img.src = afterSrc;
+                img.style.opacity = '1';
+                item.setAttribute('data-state', 'after');
+                toggleText.textContent = 'AFTER';
+            }, 200);
+        } else {
+            // Switch to BEFORE
+            img.style.opacity = '0';
+            setTimeout(() => {
+                img.src = beforeSrc;
+                img.style.opacity = '1';
+                item.setAttribute('data-state', 'before');
+                toggleText.textContent = 'BEFORE';
+            }, 200);
         }
-    }
+    });
 });
 
 // ================================
@@ -173,7 +118,7 @@ const contactForm = document.getElementById('contact-form');
 const formSuccess = document.getElementById('form-success');
 
 if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
+    contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         // Get form values
@@ -218,20 +163,41 @@ if (contactForm) {
             return;
         }
 
-        // If validation passes, show success message
-        // In a real implementation, you would send the data to a server here
-        console.log('Form Data:', { name, email, phone, service, message });
+        // Prepare form data
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('email', email);
+        formData.append('phone', phone);
+        formData.append('service', service);
+        formData.append('message', message);
 
-        // Hide form and show success message
-        contactForm.style.display = 'none';
-        formSuccess.classList.add('active');
+        try {
+            // Send form data to PHP script
+            const response = await fetch('send-email.php', {
+                method: 'POST',
+                body: formData
+            });
 
-        // Reset form after 5 seconds
-        setTimeout(() => {
-            contactForm.reset();
-            contactForm.style.display = 'block';
-            formSuccess.classList.remove('active');
-        }, 5000);
+            const result = await response.json();
+
+            if (result.success) {
+                // Hide form and show success message
+                contactForm.style.display = 'none';
+                formSuccess.classList.add('active');
+
+                // Reset form after 5 seconds
+                setTimeout(() => {
+                    contactForm.reset();
+                    contactForm.style.display = 'block';
+                    formSuccess.classList.remove('active');
+                }, 5000);
+            } else {
+                alert(result.message || 'Sorry, there was an error sending your message. Please call us directly at (508) 380-5563.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Sorry, there was an error sending your message. Please call us directly at (508) 380-5563.');
+        }
     });
 }
 
@@ -421,7 +387,7 @@ if (copyrightText) {
 // ================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('HW Landscaping website loaded successfully!');
+    console.log('H.W Landscaping website loaded successfully!');
 
     // Initial calls
     scrollActive();

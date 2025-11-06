@@ -1,4 +1,4 @@
-/* ================================
+    /* ================================
    CSS Reset & Base Styles
    ================================ */
 
@@ -28,7 +28,7 @@
     --font-secondary: 'Merriweather', serif;
 
     /* Spacing */
-    --header-height: 5rem;
+    --header-height: 6.5rem;
     --section-padding: 5rem 0;
     --container-max: 1200px;
     --border-radius: 12px;
@@ -164,6 +164,12 @@ button {
     font-size: 1.8rem;
 }
 
+.nav-logo .logo-img {
+    height: 65px;
+    width: auto;
+    object-fit: contain;
+}
+
 .nav-list {
     display: flex;
     gap: 2rem;
@@ -212,9 +218,9 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=80');
+    background-image: url('images/legend.jpg');
     background-size: cover;
-    background-position: center;
+    background-position: center bottom;
     background-attachment: fixed;
 }
 
@@ -318,8 +324,10 @@ button {
 
 .services-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
 .service-card {
@@ -383,52 +391,54 @@ button {
     position: relative;
     overflow: hidden;
     border-radius: var(--border-radius);
-    cursor: pointer;
     aspect-ratio: 4/3;
+    box-shadow: 0 4px 15px var(--shadow);
 }
 
 .gallery-item img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.5s ease;
+    transition: opacity 0.4s ease;
 }
 
-.gallery-overlay {
+.gallery-toggle-btn {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to top, rgba(45, 80, 22, 0.9), transparent);
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--accent-color);
+    color: var(--white);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: flex-end;
-    padding: 2rem;
-    opacity: 0;
-    transition: var(--transition);
+    gap: 0.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    z-index: 10;
 }
 
-.gallery-item:hover img {
-    transform: scale(1.1);
+.gallery-toggle-btn:hover {
+    background-color: var(--primary-color);
+    transform: translateX(-50%) scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
 
-.gallery-item:hover .gallery-overlay {
-    opacity: 1;
+.gallery-toggle-btn:active {
+    transform: translateX(-50%) scale(0.98);
 }
 
-.gallery-caption {
-    color: var(--white);
-    font-weight: 600;
+.gallery-toggle-btn i {
     font-size: 1rem;
-    text-align: center;
-    margin-bottom: 1rem;
 }
 
-.gallery-overlay i {
-    color: var(--white);
-    font-size: 2rem;
+.gallery-item[data-state="after"] .gallery-toggle-btn {
+    background-color: var(--primary-color);
 }
 
 /* Lightbox */
@@ -642,15 +652,17 @@ button {
     font-size: 0.95rem;
 }
 
-.about-image {
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    box-shadow: 0 10px 40px var(--shadow);
+.about-images {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
-.about-image img {
+.about-img {
     width: 100%;
-    height: 100%;
+    height: 250px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 10px 40px var(--shadow);
     object-fit: cover;
 }
 
@@ -855,6 +867,12 @@ button {
     font-size: 1.8rem;
 }
 
+.footer-logo .logo-img {
+    height: 45px;
+    width: auto;
+    object-fit: contain;
+}
+
 .footer-tagline {
     font-size: 0.95rem;
     margin-bottom: 1rem;
@@ -974,7 +992,7 @@ button {
 
 @media screen and (max-width: 968px) {
     :root {
-        --header-height: 4rem;
+        --header-height: 5rem;
     }
 
     .section-title {
@@ -1036,7 +1054,10 @@ button {
         right: 2rem;
     }
 
-    .services-grid,
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+
     .gallery-grid,
     .testimonials-grid {
         grid-template-columns: 1fr;
