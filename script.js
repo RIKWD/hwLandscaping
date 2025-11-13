@@ -1,4 +1,53 @@
 // ================================
+// Email Function (EmailJS)
+// ================================
+
+function sendEmail() {  
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const service = document.getElementById('service').value;
+    const message = document.getElementById('message').value.trim();
+
+    // Basic validation
+    if (!name || !email || !phone || !service) {
+        alert('Please fill in all required fields.');
+        return;
+    }
+
+    const templateParams = {
+        name: name,
+        email: email,
+        phone: phone,
+        service: service,
+        message: message,
+    };
+
+    emailjs.send("service_nzykkcc", "template_79if8ai", templateParams)
+        .then((response) => {
+            console.log('Email sent successfully!', response);
+            const contactForm = document.getElementById('contact-form');
+            const formSuccess = document.getElementById('form-success');
+            
+            // Hide form and show success message
+            contactForm.style.display = 'none';
+            formSuccess.classList.add('active');
+
+            // Reset form after 5 seconds
+            setTimeout(() => {
+                contactForm.reset();
+                contactForm.style.display = 'block';
+                formSuccess.classList.remove('active');
+            }, 5000);
+        })
+        .catch((error) => {
+            console.error('Email send failed:', error);
+            alert('Sorry, there was an error sending your message. Please call us directly at (508) 380-5563.');
+        });
+}
+
+
+// ================================
 // Mobile Navigation
 // ================================
 
@@ -163,41 +212,8 @@ if (contactForm) {
             return;
         }
 
-        // Prepare form data
-        const formData = new FormData();
-        formData.append('name', name);
-        formData.append('email', email);
-        formData.append('phone', phone);
-        formData.append('service', service);
-        formData.append('message', message);
-
-        try {
-            // Send form data to PHP script
-            const response = await fetch('send-email.php', {
-                method: 'POST',
-                body: formData
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                // Hide form and show success message
-                contactForm.style.display = 'none';
-                formSuccess.classList.add('active');
-
-                // Reset form after 5 seconds
-                setTimeout(() => {
-                    contactForm.reset();
-                    contactForm.style.display = 'block';
-                    formSuccess.classList.remove('active');
-                }, 5000);
-            } else {
-                alert(result.message || 'Sorry, there was an error sending your message. Please call us directly at (508) 380-5563.');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Sorry, there was an error sending your message. Please call us directly at (508) 380-5563.');
-        }
+        // Call the EmailJS function
+        sendEmail();
     });
 }
 
