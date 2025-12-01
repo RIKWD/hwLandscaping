@@ -23,7 +23,7 @@ function sendEmail() {
         message: message,
     };
 
-    emailjs.send("service_nzykkcc", "template_79if8ai", templateParams)
+    emailjs.send("service_cy00zv5", "template_79if8ai", templateParams)
         .then((response) => {
             console.log('Email sent successfully!', response);
             const contactForm = document.getElementById('contact-form');
